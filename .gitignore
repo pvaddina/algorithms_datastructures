@@ -1,0 +1,13 @@
+*.swp
+*.*~
+*.exe
+*.out
+*.obj
+.vscode
+
+build/
+auto/
+cpp/hopinic/
+__pycache__
+
+

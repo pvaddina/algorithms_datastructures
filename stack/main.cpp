@@ -12,9 +12,10 @@ namespace T1
   {
     auto start = std::chrono::steady_clock::now();
     T st;
+    constexpr auto testSz = 1000000;
 
     //std::cout << "pushing: ";
-    for (int i = 0; i < 1000000; ++i)
+    for (int i = 0; i < testSz; ++i)
     {
       //std::cout << i << " ";
       st.push(i);
@@ -31,7 +32,7 @@ namespace T1
     //std::cout << "\n";
     auto end = std::chrono::steady_clock::now();
     auto diff = end - start;
-    std::cout << "POD_Test with T=" << dtype << ", took: " << std::chrono::duration<double, std::milli>(diff).count() << "ms" << std::endl;
+    std::cout << "Pusing/Popping " << testSz << " integers to the stack type:=" << dtype << ", took: " << std::chrono::duration<double, std::milli>(diff).count() << "ms" << std::endl;
   }
 }
 
@@ -68,8 +69,9 @@ namespace T2
   {
     auto start = std::chrono::steady_clock::now();
     T st;
+    constexpr auto testSz = 900000;
     //std::cout << "Pusing objects constructed with rvalue refs, and finally being moved into the stack";
-    for (int i = 0; i < 900000; ++i)
+    for (int i = 0; i < testSz; ++i)
     {
       st.push(NoCopyData("name", { i, i + 1, i + 2, i + 3}));
     }
@@ -99,7 +101,7 @@ namespace T2
     //std::cout << "\n";
     auto end = std::chrono::steady_clock::now();
     auto diff = end - start;
-    std::cout << "TestComplextyp with T=" << dtype << ", took: " << std::chrono::duration<double, std::milli>(diff).count() << "ms" << std::endl;
+    std::cout << "Pusing/Popping " << testSz << " complex('NoCopyData' type) to the stack type:=" << dtype << ", took: " << std::chrono::duration<double, std::milli>(diff).count() << "ms" << std::endl;
   }
 
   template <typename T>
@@ -108,7 +110,8 @@ namespace T2
     auto start = std::chrono::steady_clock::now();
     T st;
 
-    for (int i = 0; i < 500000; ++i)
+    constexpr auto testSz = 500000;
+    for (int i = 0; i < testSz; ++i)
     {
       // Note without the move, the following operation will fail to compile
       // since the NoCopyData type does not support copying. 
@@ -131,10 +134,8 @@ namespace T2
     //std::cout << "\n";
     auto end = std::chrono::steady_clock::now();
     auto diff = end - start;
-    std::cout << "TestComplextyp with T=" << dtype << ", took: " << std::chrono::duration<double, std::milli>(diff).count() << "ms" << std::endl;
+    std::cout << "Pusing/Popping " << testSz << " complex('NoCopyData' type) to the stack type:=" << dtype << " using emplace, took: " << std::chrono::duration<double, std::milli>(diff).count() << "ms" << std::endl;
   }
-
-
 }
 
 namespace T3
@@ -152,7 +153,8 @@ namespace T3
     T st;
 
     //std::cout << "Pusing objects that are default constructed and finally being moved to the stack";
-    for (int i = 0; i < 1000000; ++i)
+    constexpr auto testSz = 1000000;
+    for (int i = 0; i < testSz; ++i)
     {
       // This will invoke the push with move semantics. Since SimpleData implements/supports
       // default copying and moving this is fine
@@ -160,9 +162,9 @@ namespace T3
     }
     //std::cout << "\n";
 
-    SimpleData data{};
+    SimpleData data{"Some text"};
     //std::cout << "Pusing one single object using copy assignment into the stack";
-    for (int i = 0; i < 1000000; ++i)
+    for (int i = 0; i < testSz; ++i)
     {
       st.push(data);
     }
@@ -177,7 +179,8 @@ namespace T3
     //std::cout << "\n";
     auto end = std::chrono::steady_clock::now();
     auto diff = end - start;
-    std::cout << "TestSimpleData with T=" << dtype << ", took: " << std::chrono::duration<double, std::milli>(diff).count() << "ms" << std::endl;
+    std::cout << "Pushing " << testSz << "items of type 'SimpleDataType' ";
+    std::cout << "Pushing another " << testSz << "items of a single object by copy to the stack type : = " << dtype << ", took : " << std::chrono::duration<double, std::milli>(diff).count() << "ms" << std::endl;
   }
 }
 
@@ -187,21 +190,25 @@ int main()
   T1::POD_Test<AG::Stack<int> >(std::string("AG::Stack<int>"));
   T1::POD_Test<AG::LLStack<int> >(std::string("AG::LLStack<int>"));
   T1::POD_Test<std::stack<int> >(std::string("std::stack<int>"));
+  std::cout << "\n";
 
   // A complex data type
   T2::TestComplexTyp<AG::Stack<T2::NoCopyData> >(std::string("AG::Stack<T2::NoCopyData>"));
   T2::TestComplexTyp<AG::LLStack<T2::NoCopyData> >(std::string("AG::LLStack<T2::NoCopyData>"));
   T2::TestComplexTyp<std::stack<T2::NoCopyData> >(std::string("std::stack<T2::NoCopyData>"));
+  std::cout << "\n";
 
   // Use complex data type and push objects via emplace
   T2::ComplexTypeEmplaceTest<AG::Stack<T2::NoCopyData> >(std::string("AG::Stack<T2::NoCopyData>"));
   T2::ComplexTypeEmplaceTest<AG::LLStack<T2::NoCopyData> >(std::string("AG::LLStack<T2::NoCopyData>"));
   T2::ComplexTypeEmplaceTest<std::stack<T2::NoCopyData> >(std::string("std::stack<T2::NoCopyData>"));
+  std::cout << "\n";
 
   // A simple data type 
   T3::TestSimpleData<AG::Stack<T3::SimpleData> >(std::string("AG::Stack<T3::SimpleData>"));
   T3::TestSimpleData<AG::LLStack<T3::SimpleData> >(std::string("AG::LLStack<T3::SimpleData>"));
   T3::TestSimpleData<std::stack<T3::SimpleData> >(std::string("std::stack<T3::SimpleData>"));
+  std::cout << "\n";
 
   return 0;
 }

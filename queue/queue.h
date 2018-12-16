@@ -4,7 +4,7 @@
 namespace AG
 {
   ///
-  /// \brief Stack class
+  /// \brief Queue class
   /// A stack implementation with a resizing array. Meaning the stack is
   /// initialized with a size of 1. And after every push the size of the array
   /// is checked and if it is equal to the size of the array, then a new
@@ -13,16 +13,17 @@ namespace AG
   /// Similarly when an item is popped, and if the size if 1/4th the size 
   /// of the array, then a new array with 1/2 the size of the actual array
   /// is created and used
+  /// Cases when not to access the front/back items:
+  ///    1. Immediately after creating the queue
+  ///    2. When size of the queue is 0, say by popping all the elements enqueued in it
   template <typename T>
-  class Stack
+  class Queue
   {
     public:
-      Stack() { Resize(1); }
+      Queue() { Resize(1); }
 
       void push(T& item)
       {
-        // Copy assignment operation
-        //std::cout << "Copy pushing ....\n";
         mArray[mLen++] = item;
         if (mLen == mMaxSize)
         {
@@ -31,8 +32,6 @@ namespace AG
       }
       void push(T&& item)
       {
-        // Move assignment operation
-        //std::cout << "Move pushing ....\n";
         mArray[mLen++] = std::move(item);
         if (mLen == mMaxSize)
         {
@@ -42,24 +41,26 @@ namespace AG
       template <typename... Ts>
       void emplace(Ts&&... args)
       {
-        mArray[mLen++] = std::move(T(std::forward<Ts>(args)...));
-        if (mLen == mMaxSize)
-        {
-          Resize(mMaxSize * 2);
-        }
+        push(T(std::forward<Ts>(args)...));
       }
-      T& top()
-      {
-        return mArray[mLen - 1];
-      }
+      T& front() { return mArray[mFront]; }
+      T& back() { return mArray[mLen-1]; }
       void pop()
       {
         if (mLen > 0)
         {
           --mLen;
-          if (mLen > 0 && mLen == mMaxSize / 4)
+          if (mLen > 0)
           {
-            Resize(mMaxSize / 2);
+            ++mFront;
+            if (mLen == mMaxSize / 4)
+            {
+              Resize(mMaxSize / 2);
+            }
+          }
+          else
+          {
+            mFront = 0;
           }
         }
       }
@@ -72,20 +73,21 @@ namespace AG
         mMaxSize = newSz;
         // Call to default constructor
         mArray = new T[mMaxSize];
-        for (size_t i = 0; i < mLen; ++i)
+        for (size_t i = mFront; i < mLen; ++i)
         {
-          // Move assignment operation
           mArray[i] = std::move(oldArray[i]);
         }
-        delete[] oldArray;
+        mFront = 0;
       }
 
     private:
       T * mArray = nullptr;
       size_t mLen = 0;
       size_t mMaxSize = 0;
+      size_t mFront = 0;
   };
 
+#if 0
   ///
   /// \brief LLStack class
   /// A stack implementation with a linked list. Here a simple node structure
@@ -140,6 +142,7 @@ namespace AG
     Node<T>* mLast = nullptr;
     size_t mLen = 0;
   };
+#endif
 }
 
 

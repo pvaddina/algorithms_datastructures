@@ -186,27 +186,27 @@ namespace T3
 
 int main()
 {
-  // Plain old data tests with AG::Queue and std::queue
-  T1::POD_Test<AG::Queue<int> >(std::string("AG::Queue<int>"));
-  //T1::POD_Test<AG::LLStack<int> >(std::string("AG::LLStack<int>"));
+  // Plain old data tests with DS::Queue and std::queue
+  T1::POD_Test<DS::Queue<int> >(std::string("DS::Queue<int>"));
+  //T1::POD_Test<DS::LLStack<int> >(std::string("DS::LLStack<int>"));
   T1::POD_Test<std::queue<int> >(std::string("std::queue<int>"));
   std::cout << "\n";
 
   // A complex data type
-  T2::TestComplexTyp<AG::Queue<T2::NoCopyData> >(std::string("AG::Queue<T2::NoCopyData>"));
-  //T2::TestComplexTyp<AG::LLStack<T2::NoCopyData> >(std::string("AG::LLStack<T2::NoCopyData>"));
+  T2::TestComplexTyp<DS::Queue<T2::NoCopyData> >(std::string("DS::Queue<T2::NoCopyData>"));
+  //T2::TestComplexTyp<DS::LLStack<T2::NoCopyData> >(std::string("DS::LLStack<T2::NoCopyData>"));
   T2::TestComplexTyp<std::queue<T2::NoCopyData> >(std::string("std::queue<T2::NoCopyData>"));
   std::cout << "\n";
 
   // Use complex data type and push objects via emplace
-  T2::ComplexTypeEmplaceTest<AG::Queue<T2::NoCopyData> >(std::string("AG::Queue<T2::NoCopyData>"));
-  //T2::ComplexTypeEmplaceTest<AG::LLStack<T2::NoCopyData> >(std::string("AG::LLStack<T2::NoCopyData>"));
+  T2::ComplexTypeEmplaceTest<DS::Queue<T2::NoCopyData> >(std::string("DS::Queue<T2::NoCopyData>"));
+  //T2::ComplexTypeEmplaceTest<DS::LLStack<T2::NoCopyData> >(std::string("DS::LLStack<T2::NoCopyData>"));
   T2::ComplexTypeEmplaceTest<std::queue<T2::NoCopyData> >(std::string("std::queue<T2::NoCopyData>"));
   std::cout << "\n";
 
   // A simple data type 
-  T3::TestSimpleData<AG::Queue<T3::SimpleData> >(std::string("AG::Queue<T3::SimpleData>"));
-  //T3::TestSimpleData<AG::LLStack<T3::SimpleData> >(std::string("AG::LLStack<T3::SimpleData>"));
+  T3::TestSimpleData<DS::Queue<T3::SimpleData> >(std::string("DS::Queue<T3::SimpleData>"));
+  //T3::TestSimpleData<DS::LLStack<T3::SimpleData> >(std::string("DS::LLStack<T3::SimpleData>"));
   T3::TestSimpleData<std::queue<T3::SimpleData> >(std::string("std::queue<T3::SimpleData>"));
   std::cout << "\n";
 

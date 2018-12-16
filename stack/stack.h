@@ -1,7 +1,7 @@
 #pragma once
 #include <memory>
 
-namespace AG
+namespace DS
 {
   ///
   /// \brief Stack class

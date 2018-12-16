@@ -187,26 +187,26 @@ namespace T3
 int main()
 {
   // Plain old data tests with AG::Stack and std::stack
-  T1::POD_Test<AG::Stack<int> >(std::string("AG::Stack<int>"));
-  T1::POD_Test<AG::LLStack<int> >(std::string("AG::LLStack<int>"));
+  T1::POD_Test<DS::Stack<int> >(std::string("AG::Stack<int>"));
+  T1::POD_Test<DS::LLStack<int> >(std::string("AG::LLStack<int>"));
   T1::POD_Test<std::stack<int> >(std::string("std::stack<int>"));
   std::cout << "\n";
 
   // A complex data type
-  T2::TestComplexTyp<AG::Stack<T2::NoCopyData> >(std::string("AG::Stack<T2::NoCopyData>"));
-  T2::TestComplexTyp<AG::LLStack<T2::NoCopyData> >(std::string("AG::LLStack<T2::NoCopyData>"));
+  T2::TestComplexTyp<DS::Stack<T2::NoCopyData> >(std::string("AG::Stack<T2::NoCopyData>"));
+  T2::TestComplexTyp<DS::LLStack<T2::NoCopyData> >(std::string("AG::LLStack<T2::NoCopyData>"));
   T2::TestComplexTyp<std::stack<T2::NoCopyData> >(std::string("std::stack<T2::NoCopyData>"));
   std::cout << "\n";
 
   // Use complex data type and push objects via emplace
-  T2::ComplexTypeEmplaceTest<AG::Stack<T2::NoCopyData> >(std::string("AG::Stack<T2::NoCopyData>"));
-  T2::ComplexTypeEmplaceTest<AG::LLStack<T2::NoCopyData> >(std::string("AG::LLStack<T2::NoCopyData>"));
+  T2::ComplexTypeEmplaceTest<DS::Stack<T2::NoCopyData> >(std::string("AG::Stack<T2::NoCopyData>"));
+  T2::ComplexTypeEmplaceTest<DS::LLStack<T2::NoCopyData> >(std::string("AG::LLStack<T2::NoCopyData>"));
   T2::ComplexTypeEmplaceTest<std::stack<T2::NoCopyData> >(std::string("std::stack<T2::NoCopyData>"));
   std::cout << "\n";
 
   // A simple data type 
-  T3::TestSimpleData<AG::Stack<T3::SimpleData> >(std::string("AG::Stack<T3::SimpleData>"));
-  T3::TestSimpleData<AG::LLStack<T3::SimpleData> >(std::string("AG::LLStack<T3::SimpleData>"));
+  T3::TestSimpleData<DS::Stack<T3::SimpleData> >(std::string("AG::Stack<T3::SimpleData>"));
+  T3::TestSimpleData<DS::LLStack<T3::SimpleData> >(std::string("AG::LLStack<T3::SimpleData>"));
   T3::TestSimpleData<std::stack<T3::SimpleData> >(std::string("std::stack<T3::SimpleData>"));
   std::cout << "\n";
 

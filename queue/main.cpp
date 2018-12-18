@@ -268,7 +268,6 @@ namespace T3
 
 int main()
 {
-#if 0
   // Plain old data tests with DS::Queue and std::queue
   T1::POD_Test<DS::Queue<int> >(std::string("DS::Queue<int>"));
   T1::POD_Test<DS::LLQueue<int> >(std::string("DS::LLQueue<int>"));
@@ -298,12 +297,11 @@ int main()
   T2::MultiplePushPop<std::queue<T2::NoCopyData> >(std::string("std::queue<T2::NoCopyData>"));
   std::cout << "\n";
 
-#endif
-
   T2::MultiplePushPop_SmallIterations<DS::Queue<T2::NoCopyData> >(std::string("DS::Queue<T2::NoCopyData>"));
   T2::MultiplePushPop_SmallIterations<DS::LLQueue<T2::NoCopyData> >(std::string("DS::LLQueue<T2::NoCopyData>"));
   T2::MultiplePushPop_SmallIterations<std::queue<T2::NoCopyData> >(std::string("std::queue<T2::NoCopyData>"));
   std::cout << "\n";
+
   return 0;
 }
 

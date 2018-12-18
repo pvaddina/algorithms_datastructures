@@ -5,12 +5,12 @@ namespace DS
 {
   ///
   /// \brief Queue class
-  /// A stack implementation with a resizing array. Meaning the stack is
-  /// initialized with a size of 1. And after every push the size of the array
+  /// A Queue implementation with a resizing array. Meaning the Queue is
+  /// initialized with a size of 1. And after every push the size of the Queue
   /// is checked and if it is equal to the size of the array, then a new
   /// array with double the size is created and existing items are copied
   /// in the new array.
-  /// Similarly when an item is popped, and if the size if 1/4th the size 
+  /// Similarly when an item is popped, and if the size of the queue is 1/4th the size 
   /// of the array, then a new array with 1/2 the size of the actual array
   /// is created and used
   /// Cases when not to access the front/back items:
@@ -21,6 +21,13 @@ namespace DS
   {
     public:
       Queue() { Resize(1); }
+      ~Queue() 
+      {
+        for (size_t i = 0; i < mLen; ++i)
+        {
+          pop();
+        }
+      }
 
       void push(T& item)
       {
@@ -43,8 +50,8 @@ namespace DS
       {
         push(T(std::forward<Ts>(args)...));
       }
-      T& front() { return mArray[mFront]; }
-      T& back() { return mArray[mLen-1]; }
+      T& front() { return mArray[mFront]; }  // Get the first item of the stack
+      T& back() { return mArray[mLen-1]; }   // To be called at least after the first push
       void pop()
       {
         if (mLen > 0)
@@ -87,32 +94,42 @@ namespace DS
       size_t mFront = 0;
   };
 
-#if 0
   ///
-  /// \brief LLStack class
-  /// A stack implementation with a linked list. Here a simple node structure
+  /// \brief LLQueue class
+  /// A Queue implementation with a linked list. Here a simple node structure
   /// represents each item that is pushed on the stack.
   /// The node holds a link to the last item in the list. The first item
   /// of the stack does not point to anything else.
   template <typename T>
-  class LLStack
+  class LLQueue
   {
   public:
-    LLStack() {}
+    LLQueue() {}
+    ~LLQueue()
+    {
+      for (size_t i = 0; i < mLen; ++i)
+      {
+        pop();
+      }
+    }
     void push(T& item)
     {
       auto lastNode = mLast;
       mLast = new Node<T>{};
-      mLast->item = item;
-      mLast->pPrevItem = lastNode;
+      mLast->item = item; // Copy the item
+      mLast->pNextItem = nullptr;
+      if (lastNode) { lastNode->pNextItem = mLast; }
+      if (!mFirst) { mFirst = mLast; }
       ++mLen;
     }
     void push(T&& item)
     {
       auto lastNode = mLast;
       mLast = new Node<T>{};
-      mLast->item = std::move(item);
-      mLast->pPrevItem = lastNode;
+      mLast->item = std::move(item); // Move the item
+      mLast->pNextItem = nullptr;
+      if (lastNode) { lastNode->pNextItem = mLast; }
+      if (!mFirst) { mFirst = mLast; }
       ++mLen;
     }
     template <typename... Ts>
@@ -120,13 +137,14 @@ namespace DS
     {
       push(T{ std::forward<Ts>(args)... });
     }
-    T& top() { return mLast->item; }
+    T& front() { return mFirst->item; }
+    T& back() { return mLast->item; }
     void pop()
     {
       if (mLen > 0)
       {
-        auto node2Del = mLast;
-        mLast = mLast->pPrevItem;
+        auto node2Del = mFirst;
+        mFirst = node2Del->pNextItem;
         delete node2Del;
         --mLen;
       }
@@ -137,12 +155,12 @@ namespace DS
     template <typename U> struct Node
     {
       U item;
-      Node<U>* pPrevItem;
+      Node<U>* pNextItem;
     };
+    Node<T>* mFirst = nullptr;
     Node<T>* mLast = nullptr;
     size_t mLen = 0;
   };
-#endif
 }
 
 

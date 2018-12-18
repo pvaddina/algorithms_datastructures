@@ -32,7 +32,7 @@ namespace T1
     //std::cout << "\n";
     auto end = std::chrono::steady_clock::now();
     auto diff = end - start;
-    std::cout << "Pusing/Popping " << testSz << " integers to the stack type:=" << dtype << ", took: " << std::chrono::duration<double, std::milli>(diff).count() << "ms" << std::endl;
+    std::cout << "Pusing/Popping " << testSz << " integers to the queue type:=" << dtype << ", took: " << std::chrono::duration<double, std::milli>(diff).count() << "ms" << std::endl;
   }
 }
 
@@ -101,7 +101,7 @@ namespace T2
     //std::cout << "\n";
     auto end = std::chrono::steady_clock::now();
     auto diff = end - start;
-    std::cout << "Pusing/Popping " << testSz << " complex('NoCopyData' type) to the stack type:=" << dtype << ", took: " << std::chrono::duration<double, std::milli>(diff).count() << "ms" << std::endl;
+    std::cout << "Pusing/Popping " << testSz << " complex('NoCopyData' type) to the queue type:=" << dtype << ", took: " << std::chrono::duration<double, std::milli>(diff).count() << "ms" << std::endl;
   }
 
   template <typename T>
@@ -134,8 +134,90 @@ namespace T2
     //std::cout << "\n";
     auto end = std::chrono::steady_clock::now();
     auto diff = end - start;
-    std::cout << "Pusing/Popping " << testSz << " complex('NoCopyData' type) to the stack type:=" << dtype << " using emplace, took: " << std::chrono::duration<double, std::milli>(diff).count() << "ms" << std::endl;
+    std::cout << "Pusing/Popping " << testSz << " complex('NoCopyData' type) to the queue type:=" << dtype << " using emplace, took: " << std::chrono::duration<double, std::milli>(diff).count() << "ms" << std::endl;
   }
+
+  template <typename T>
+  void MultiplePushPop(const std::string&& dtype)
+  {
+    auto start = std::chrono::steady_clock::now();
+    T st;
+
+    auto push_pop = [&st](const int npush, const int npop) {
+      for (int i = 0; i < npush; ++i)
+      {
+        st.push(NoCopyData("name", { i, i + 1, i + 2, i + 3 }));
+      }
+      std::cout << "Size after " << npush << " pushes is: " << st.size() << std::endl;
+      for (int i = 0; i < npop; ++i)
+      {
+        st.pop();
+      }
+      std::cout << "Size after " << npop << " pops is: " << st.size() << std::endl;
+    };
+
+    push_pop(1000000, 500000);
+    push_pop(1000000, 500000);
+    push_pop(1000000, 2000000);
+    std::cout << "Final size of the queue=" << st.size() << std::endl;
+
+    //std::cout << "\n";
+    auto end = std::chrono::steady_clock::now();
+    auto diff = end - start;
+    std::cout << "Pusing/Popping large amounts of data at the same time took " << std::chrono::duration<double, std::milli>(diff).count() << "ms" << std::endl;
+  }
+
+  template <typename T>
+  void MultiplePushPop_SmallIterations(const std::string&& dtype)
+  {
+    auto start = std::chrono::steady_clock::now();
+    T st;
+
+    auto push_pop = [&st](const int npush, const int npop) {
+      for (int i = 0; i < npush; ++i)
+      {
+        st.push(NoCopyData("name", { i, i + 1, i + 2, i + 3 }));
+      }
+      //std::cout << "Size after " << npush << " pushes is: " << st.size() << std::endl;
+      for (int i = 0; i < npop; ++i)
+      {
+        st.pop();
+      }
+      //std::cout << "Size after " << npop << " pops is: " << st.size() << std::endl;
+    };
+
+    push_pop(100, 1);
+    push_pop(200, 1);
+    push_pop(10, 10);
+    push_pop(10, 10);
+    push_pop(10, 10);
+    push_pop(10, 10);
+    push_pop(10, 10);
+    push_pop(10, 10);
+    push_pop(10, 10);
+    push_pop(10, 10);
+    push_pop(10, 10);
+    push_pop(10, 10);
+    push_pop(10, 10);
+    push_pop(10, 10);
+    push_pop(10, 10);
+    push_pop(10, 10);
+    push_pop(10, 10);
+    push_pop(10, 50);
+    push_pop(10, 50);
+    push_pop(10, 50);
+    for (int i = 0; i < 500000; ++i)
+    {
+      push_pop(100, 100);
+    }
+    std::cout << "Final size of the queue=" << st.size() << std::endl;
+
+    //std::cout << "\n";
+    auto end = std::chrono::steady_clock::now();
+    auto diff = end - start;
+    std::cout << "Pusing/Popping small amounts of items took " << std::chrono::duration<double, std::milli>(diff).count() << "ms" << std::endl;
+  }
+
 }
 
 namespace T3
@@ -180,36 +262,48 @@ namespace T3
     auto end = std::chrono::steady_clock::now();
     auto diff = end - start;
     std::cout << "Pushing " << testSz << "items of type 'SimpleDataType' ";
-    std::cout << "Pushing another " << testSz << "items of a single object by copy to the stack type : = " << dtype << ", took : " << std::chrono::duration<double, std::milli>(diff).count() << "ms" << std::endl;
+    std::cout << "Pushing another " << testSz << "items of a single object by copy to the queue type : = " << dtype << ", took : " << std::chrono::duration<double, std::milli>(diff).count() << "ms" << std::endl;
   }
 }
 
 int main()
 {
+#if 0
   // Plain old data tests with DS::Queue and std::queue
   T1::POD_Test<DS::Queue<int> >(std::string("DS::Queue<int>"));
-  //T1::POD_Test<DS::LLStack<int> >(std::string("DS::LLStack<int>"));
+  T1::POD_Test<DS::LLQueue<int> >(std::string("DS::LLQueue<int>"));
   T1::POD_Test<std::queue<int> >(std::string("std::queue<int>"));
   std::cout << "\n";
 
   // A complex data type
   T2::TestComplexTyp<DS::Queue<T2::NoCopyData> >(std::string("DS::Queue<T2::NoCopyData>"));
-  //T2::TestComplexTyp<DS::LLStack<T2::NoCopyData> >(std::string("DS::LLStack<T2::NoCopyData>"));
+  T2::TestComplexTyp<DS::LLQueue<T2::NoCopyData> >(std::string("DS::LLQueue<T2::NoCopyData>"));
   T2::TestComplexTyp<std::queue<T2::NoCopyData> >(std::string("std::queue<T2::NoCopyData>"));
   std::cout << "\n";
 
   // Use complex data type and push objects via emplace
   T2::ComplexTypeEmplaceTest<DS::Queue<T2::NoCopyData> >(std::string("DS::Queue<T2::NoCopyData>"));
-  //T2::ComplexTypeEmplaceTest<DS::LLStack<T2::NoCopyData> >(std::string("DS::LLStack<T2::NoCopyData>"));
+  T2::ComplexTypeEmplaceTest<DS::LLQueue<T2::NoCopyData> >(std::string("DS::LLQueue<T2::NoCopyData>"));
   T2::ComplexTypeEmplaceTest<std::queue<T2::NoCopyData> >(std::string("std::queue<T2::NoCopyData>"));
   std::cout << "\n";
 
   // A simple data type 
   T3::TestSimpleData<DS::Queue<T3::SimpleData> >(std::string("DS::Queue<T3::SimpleData>"));
-  //T3::TestSimpleData<DS::LLStack<T3::SimpleData> >(std::string("DS::LLStack<T3::SimpleData>"));
+  T3::TestSimpleData<DS::LLQueue<T3::SimpleData> >(std::string("DS::LLQueue<T3::SimpleData>"));
   T3::TestSimpleData<std::queue<T3::SimpleData> >(std::string("std::queue<T3::SimpleData>"));
   std::cout << "\n";
 
+  T2::MultiplePushPop<DS::Queue<T2::NoCopyData> >(std::string("DS::Queue<T2::NoCopyData>"));
+  T2::MultiplePushPop<DS::LLQueue<T2::NoCopyData> >(std::string("DS::LLQueue<T2::NoCopyData>"));
+  T2::MultiplePushPop<std::queue<T2::NoCopyData> >(std::string("std::queue<T2::NoCopyData>"));
+  std::cout << "\n";
+
+#endif
+
+  T2::MultiplePushPop_SmallIterations<DS::Queue<T2::NoCopyData> >(std::string("DS::Queue<T2::NoCopyData>"));
+  T2::MultiplePushPop_SmallIterations<DS::LLQueue<T2::NoCopyData> >(std::string("DS::LLQueue<T2::NoCopyData>"));
+  T2::MultiplePushPop_SmallIterations<std::queue<T2::NoCopyData> >(std::string("std::queue<T2::NoCopyData>"));
+  std::cout << "\n";
   return 0;
 }
 

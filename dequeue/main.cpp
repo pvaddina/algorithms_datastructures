@@ -2,8 +2,8 @@
 #include <string>
 #include <vector>
 #include <chrono>
-#include <queue>
-#include "queue.h"
+#include <deque>
+#include "deque.h"
 
 namespace T1
 {
@@ -18,23 +18,24 @@ namespace T1
     for (int i = 0; i < testSz; ++i)
     {
       //std::cout << i << " ";
-      st.push(i);
+      st.push_back(i);
     }
     //std::cout << "\n";
 
     auto sz = st.size();
     //std::cout << "Popping: ";
-    for (size_t i = 0; i < sz; ++i)
+    for (size_t i = 0; i < sz/2; ++i)
     {
-      auto& a = st.back();
-      st.pop();
+      st.pop_front();
+      st.pop_back();
     }
-    //std::cout << "\n";
+
     auto end = std::chrono::steady_clock::now();
     auto diff = end - start;
     std::cout << "Pusing/Popping " << testSz << " integers to the queue type:=" << dtype << ", took: " << std::chrono::duration<double, std::milli>(diff).count() << "ms" << std::endl;
   }
 }
+
 
 namespace T2
 {
@@ -73,7 +74,7 @@ namespace T2
     //std::cout << "Pusing objects constructed with rvalue refs, and finally being moved into the stack";
     for (int i = 0; i < testSz; ++i)
     {
-      st.push(NoCopyData("name", { i, i + 1, i + 2, i + 3}));
+      st.push_back(NoCopyData("name", { i, i + 1, i + 2, i + 3}));
     }
     //std::cout << "\n";
 
@@ -88,14 +89,14 @@ namespace T2
       // Theoretically at the end of the move operation the data object should
       // be practically a zombie object with no data inside but for simplicity
       // it is not implemented here
-      st.push(std::move(data));
+      st.push_front(std::move(data));
     }
 
     auto sz = st.size();
     for (size_t i = 0; i < sz; ++i)
     {
       auto& a = st.back();
-      st.pop();
+      st.pop_front();
     }
 
     //std::cout << "\n";
@@ -104,6 +105,7 @@ namespace T2
     std::cout << "Pusing/Popping " << testSz << " complex('NoCopyData' type) to the queue type:=" << dtype << ", took: " << std::chrono::duration<double, std::milli>(diff).count() << "ms" << std::endl;
   }
 
+#if 0
   template <typename T>
   void ComplexTypeEmplaceTest(const std::string&& dtype)
   {
@@ -128,7 +130,7 @@ namespace T2
     for (size_t i = 0; i < sz; ++i)
     {
       auto& a = st.back();
-      st.pop();
+      st.pop_front();
     }
 
     //std::cout << "\n";
@@ -136,6 +138,7 @@ namespace T2
     auto diff = end - start;
     std::cout << "Pusing/Popping " << testSz << " complex('NoCopyData' type) to the queue type:=" << dtype << " using emplace, took: " << std::chrono::duration<double, std::milli>(diff).count() << "ms" << std::endl;
   }
+#endif
 
   template <typename T>
   void MultiplePushPop(const std::string&& dtype)
@@ -146,20 +149,17 @@ namespace T2
     auto push_pop = [&st](const int npush, const int npop) {
       for (int i = 0; i < npush; ++i)
       {
-        st.push(NoCopyData("name", { i, i + 1, i + 2, i + 3 }));
+        st.push_back(NoCopyData("name", { i, i + 1, i + 2, i + 3 }));
       }
-      std::cout << "Size after " << npush << " pushes is: " << st.size() << std::endl;
       for (int i = 0; i < npop; ++i)
       {
-        st.pop();
+        st.pop_back();
       }
-      std::cout << "Size after " << npop << " pops is: " << st.size() << std::endl;
     };
 
     push_pop(1000000, 500000);
     push_pop(1000000, 500000);
     push_pop(1000000, 2000000);
-    std::cout << "Final size of the queue=" << st.size() << std::endl;
 
     //std::cout << "\n";
     auto end = std::chrono::steady_clock::now();
@@ -176,12 +176,12 @@ namespace T2
     auto push_pop = [&st](const int npush, const int npop) {
       for (int i = 0; i < npush; ++i)
       {
-        st.push(NoCopyData("name", { i, i + 1, i + 2, i + 3 }));
+        st.push_back(NoCopyData("name", { i, i + 1, i + 2, i + 3 }));
       }
       //std::cout << "Size after " << npush << " pushes is: " << st.size() << std::endl;
       for (int i = 0; i < npop; ++i)
       {
-        st.pop();
+        st.pop_front();
       }
       //std::cout << "Size after " << npop << " pops is: " << st.size() << std::endl;
     };
@@ -208,11 +208,10 @@ namespace T2
     push_pop(10, 50);
     for (int i = 0; i < 500000; ++i)
     {
-      if (i%10000 == 0)
+      if (i % 10000 == 0)
         std::cout << i << " ";
       push_pop(100, 100);
     }
-    std::cout << "\nFinal size of the queue=" << st.size() << std::endl;
 
     //std::cout << "\n";
     auto end = std::chrono::steady_clock::now();
@@ -222,6 +221,7 @@ namespace T2
 
 }
 
+#if 0
 namespace T3
 {
   // A simple Data type that implements default copying and moving semantics
@@ -242,7 +242,7 @@ namespace T3
     {
       // This will invoke the push with move semantics. Since SimpleData implements/supports
       // default copying and moving this is fine
-      st.push(SimpleData{});
+      st.push_front(SimpleData{});
     }
     //std::cout << "\n";
 
@@ -250,14 +250,14 @@ namespace T3
     //std::cout << "Pusing one single object using copy assignment into the stack";
     for (int i = 0; i < testSz; ++i)
     {
-      st.push(data);
+      st.push_back(data);
     }
 
     auto sz = st.size();
     for (size_t i = 0; i < sz; ++i)
     {
       auto& a = st.back();
-      st.pop();
+      st.pop_front();
     }
 
     //std::cout << "\n";
@@ -267,42 +267,40 @@ namespace T3
     std::cout << "Pushing another " << testSz << "items of a single object by copy to the queue type : = " << dtype << ", took : " << std::chrono::duration<double, std::milli>(diff).count() << "ms" << std::endl;
   }
 }
+#endif
+
 
 int main()
 {
-  // Plain old data tests with DS::Queue and std::queue
-  T1::POD_Test<DS::Queue<int> >(std::string("DS::Queue<int>"));
-  T1::POD_Test<DS::LLQueue<int> >(std::string("DS::LLQueue<int>"));
-  T1::POD_Test<std::queue<int> >(std::string("std::queue<int>"));
+  // Plain old data tests with DS::LLDeque and std::deque
+  T1::POD_Test<DS::LLDeque<int> >(std::string("DS::LLDeque<int>"));
+  T1::POD_Test<std::deque<int> >(std::string("std::deque<int>"));
   std::cout << "\n";
 
   // A complex data type
-  T2::TestComplexTyp<DS::Queue<T2::NoCopyData> >(std::string("DS::Queue<T2::NoCopyData>"));
-  T2::TestComplexTyp<DS::LLQueue<T2::NoCopyData> >(std::string("DS::LLQueue<T2::NoCopyData>"));
-  T2::TestComplexTyp<std::queue<T2::NoCopyData> >(std::string("std::queue<T2::NoCopyData>"));
+  T2::TestComplexTyp<DS::LLDeque<T2::NoCopyData> >(std::string("DS::LLDeque<T2::NoCopyData>"));
+  T2::TestComplexTyp<std::deque<T2::NoCopyData> >(std::string("std::deque<T2::NoCopyData>"));
   std::cout << "\n";
 
   // Use complex data type and push objects via emplace
-  T2::ComplexTypeEmplaceTest<DS::Queue<T2::NoCopyData> >(std::string("DS::Queue<T2::NoCopyData>"));
-  T2::ComplexTypeEmplaceTest<DS::LLQueue<T2::NoCopyData> >(std::string("DS::LLQueue<T2::NoCopyData>"));
-  T2::ComplexTypeEmplaceTest<std::queue<T2::NoCopyData> >(std::string("std::queue<T2::NoCopyData>"));
+  //T2::ComplexTypeEmplaceTest<DS::LLDeque<T2::NoCopyData> >(std::string("DS::LLDeque<T2::NoCopyData>"));
+  //T2::ComplexTypeEmplaceTest<std::deque<T2::NoCopyData> >(std::string("std::deque<T2::NoCopyData>"));
   std::cout << "\n";
 
+  T2::MultiplePushPop<DS::LLDeque<T2::NoCopyData> >(std::string("DS::LLDeque<T2::NoCopyData>"));
+  T2::MultiplePushPop<std::deque<T2::NoCopyData> >(std::string("std::deque<T2::NoCopyData>"));
+  std::cout << "\n";
+
+  T2::MultiplePushPop_SmallIterations<DS::LLDeque<T2::NoCopyData> >(std::string("DS::LLDeque<T2::NoCopyData>"));
+  T2::MultiplePushPop_SmallIterations<std::deque<T2::NoCopyData> >(std::string("std::deque<T2::NoCopyData>"));
+  std::cout << "\n";
+#if 0
   // A simple data type 
-  T3::TestSimpleData<DS::Queue<T3::SimpleData> >(std::string("DS::Queue<T3::SimpleData>"));
+  T3::TestSimpleData<DS::LLDeque<T3::SimpleData> >(std::string("DS::LLDeque<T3::SimpleData>"));
   T3::TestSimpleData<DS::LLQueue<T3::SimpleData> >(std::string("DS::LLQueue<T3::SimpleData>"));
-  T3::TestSimpleData<std::queue<T3::SimpleData> >(std::string("std::queue<T3::SimpleData>"));
+  T3::TestSimpleData<std::deque<T3::SimpleData> >(std::string("std::deque<T3::SimpleData>"));
   std::cout << "\n";
-
-  T2::MultiplePushPop<DS::Queue<T2::NoCopyData> >(std::string("DS::Queue<T2::NoCopyData>"));
-  T2::MultiplePushPop<DS::LLQueue<T2::NoCopyData> >(std::string("DS::LLQueue<T2::NoCopyData>"));
-  T2::MultiplePushPop<std::queue<T2::NoCopyData> >(std::string("std::queue<T2::NoCopyData>"));
-  std::cout << "\n";
-
-  T2::MultiplePushPop_SmallIterations<DS::Queue<T2::NoCopyData> >(std::string("DS::Queue<T2::NoCopyData>"));
-  T2::MultiplePushPop_SmallIterations<DS::LLQueue<T2::NoCopyData> >(std::string("DS::LLQueue<T2::NoCopyData>"));
-  T2::MultiplePushPop_SmallIterations<std::queue<T2::NoCopyData> >(std::string("std::queue<T2::NoCopyData>"));
-  std::cout << "\n";
+#endif
 
   return 0;
 }

@@ -27,7 +27,7 @@ template <typename T> struct MySortOp
   T& data;
   void operator()()
   {
-    AG::SelSearch<T> sort{ data };
+    AG::SelectionSort<T> sort{ data };
     sort.Sort();
   }
 };

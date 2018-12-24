@@ -5,10 +5,10 @@
 namespace AG
 {
   template <typename T>
-  class SelSearch
+  class SelectionSort
   {
   public:
-    SelSearch(T& _d) : mData(_d) {}
+    SelectionSort(T& _d) : mData(_d) {}
 
     void Sort()
     {

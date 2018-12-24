@@ -6,6 +6,7 @@
 .vscode
 
 build/
+vs/
 auto/
 cpp/hopinic/
 __pycache__

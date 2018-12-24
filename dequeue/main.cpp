@@ -221,7 +221,6 @@ namespace T2
 
 }
 
-#if 0
 namespace T3
 {
   // A simple Data type that implements default copying and moving semantics
@@ -263,11 +262,13 @@ namespace T3
     //std::cout << "\n";
     auto end = std::chrono::steady_clock::now();
     auto diff = end - start;
+    
+    std::cout << "Final size of the deque: " << st.size() << std::endl;
     std::cout << "Pushing " << testSz << "items of type 'SimpleDataType' ";
     std::cout << "Pushing another " << testSz << "items of a single object by copy to the queue type : = " << dtype << ", took : " << std::chrono::duration<double, std::milli>(diff).count() << "ms" << std::endl;
   }
 }
-#endif
+
 
 
 int main()
@@ -294,13 +295,11 @@ int main()
   T2::MultiplePushPop_SmallIterations<DS::LLDeque<T2::NoCopyData> >(std::string("DS::LLDeque<T2::NoCopyData>"));
   T2::MultiplePushPop_SmallIterations<std::deque<T2::NoCopyData> >(std::string("std::deque<T2::NoCopyData>"));
   std::cout << "\n";
-#if 0
+
   // A simple data type 
   T3::TestSimpleData<DS::LLDeque<T3::SimpleData> >(std::string("DS::LLDeque<T3::SimpleData>"));
-  T3::TestSimpleData<DS::LLQueue<T3::SimpleData> >(std::string("DS::LLQueue<T3::SimpleData>"));
   T3::TestSimpleData<std::deque<T3::SimpleData> >(std::string("std::deque<T3::SimpleData>"));
   std::cout << "\n";
-#endif
 
   return 0;
 }

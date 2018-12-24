@@ -44,7 +44,7 @@ template <typename T> struct StdSortOp
 
 int main()
 {
-  std::cout << "My sort implementation ..." << std::endl;
+  std::cout << "My selection sort implementation ..." << std::endl;
   TestSort(MySortOp<std::array<int,NUM_ITEMS> >(data_std_array));
   TestSort(MySortOp<std::vector<int> >(data_vec));
 

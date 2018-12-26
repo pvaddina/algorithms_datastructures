@@ -72,12 +72,12 @@ int main()
   auto stdVecDataCopy1 = Data::data_vec;
 
   std::cout << "\n\nMy insertion sort implementation ..." << std::endl;
-  TestSort(SelSortTyp<Data::MyStdArray>(stdArrayCopy1));
-  TestSort(SelSortTyp<std::vector<int> >(stdVecDataCopy1));
+  TestSort(InsSortTyp<Data::MyStdArray>(stdArrayCopy1));
+  TestSort(InsSortTyp<std::vector<int> >(stdVecDataCopy1));
 
   std::cout << "Applying the insertion sort on already sorted data ..." << std::endl;
-  TestSort(SelSortTyp<Data::MyStdArray>(stdArrayCopy1));
-  TestSort(SelSortTyp<std::vector<int> >(stdVecDataCopy1));
+  TestSort(InsSortTyp<Data::MyStdArray>(stdArrayCopy1));
+  TestSort(InsSortTyp<std::vector<int> >(stdVecDataCopy1));
 
 
 

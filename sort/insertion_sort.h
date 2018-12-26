@@ -13,13 +13,17 @@ namespace AG
     void Sort()
     {
       size_t sz = mData.size();
-      for (size_t i = 1; i < sz; ++i)
+      for (size_t i = 0; i < sz; ++i)
       {
-        for (size_t j = 0; j < i; ++j)
+        for (size_t j = i; j > 0; --j)
         {
-          if (mData[i] < mData[j])
+          if (mData[j] < mData[j-1])
           {
-            AG::swap(mData[i], mData[j]);
+            AG::swap(mData[j], mData[j-1]);
+          }
+          else
+          {
+            break;
           }
         }
       }

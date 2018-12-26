@@ -13,7 +13,6 @@ namespace AG
     void Sort()
     {
       size_t sz = mData.size();
-      //T::value_type ref;
       for (size_t i = 0; i < sz; ++i)
       {
         for (size_t j = i + 1; j < sz; ++j)
@@ -21,7 +20,6 @@ namespace AG
           if (mData[j] < mData[i])
           {
             AG::swap(mData[j], mData[i]);
-            //std::swap(mData[j], mData[i]);
           }
         }
       }

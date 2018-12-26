@@ -62,12 +62,24 @@ int main()
   TestSort(SelSortTyp<Data::MyStdArray>(Data::data_std_array));
   TestSort(SelSortTyp<std::vector<int> >(Data::data_vec));
 
+  std::cout << "Applying the selection sort on already sorted data ..." << std::endl;
+  TestSort(SelSortTyp<Data::MyStdArray>(Data::data_std_array));
+  TestSort(SelSortTyp<std::vector<int> >(Data::data_vec));
+
+
+
   auto stdArrayCopy1 = Data::data_std_array;
   auto stdVecDataCopy1 = Data::data_vec;
 
-  std::cout << "My insertion sort implementation ..." << std::endl;
+  std::cout << "\n\nMy insertion sort implementation ..." << std::endl;
   TestSort(SelSortTyp<Data::MyStdArray>(stdArrayCopy1));
   TestSort(SelSortTyp<std::vector<int> >(stdVecDataCopy1));
+
+  std::cout << "Applying the insertion sort on already sorted data ..." << std::endl;
+  TestSort(SelSortTyp<Data::MyStdArray>(stdArrayCopy1));
+  TestSort(SelSortTyp<std::vector<int> >(stdVecDataCopy1));
+
+
 
   auto stdArrayCopy_std = Data::data_std_array;
   auto stdVecDataCopy_std = Data::data_vec;
@@ -75,6 +87,13 @@ int main()
   std::cout << "\n\nstd::sort algorithm implementation ..." << std::endl;
   TestSort(StdSortOp<Data::MyStdArray >(stdArrayCopy_std));
   TestSort(StdSortOp<std::vector<int> >(stdVecDataCopy_std));
+
+  std::cout << "Applying std::sort algorithm on already sorted data ..." << std::endl;
+  TestSort(StdSortOp<Data::MyStdArray >(stdArrayCopy_std));
+  TestSort(StdSortOp<std::vector<int> >(stdVecDataCopy_std));
+
+
+
 
   std::cout << std::endl << std::endl;
   Validate(Data::data_std_array, stdArrayCopy_std, "Selection");

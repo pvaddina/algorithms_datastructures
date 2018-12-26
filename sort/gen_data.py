@@ -19,7 +19,7 @@ dataTypeProps = {
                         "stop": MAX_SIZE,
                         "length": MAX_SIZE,
                          },
-        }
+                }
 
 def add_data_to_file(fp, start, stop):
     for i in range(start, stop):

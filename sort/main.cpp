@@ -1,6 +1,6 @@
 #include <iostream>
-#include "common.h"
 #include <vector>
+#include "common.h"
 #include "data_vec.h"
 #include "data_std_array.h"
 #include "selection_sort.h"
@@ -15,10 +15,8 @@ template <typename T> void TestSort(T& sortFn)
   Utils::Timer t;
   t.Start();
   sortFn();
-  //AG::SelSearch<T> sort{ data };
-  //sort.Sort();
   t.Stop();
-  std::cout << "Time for sorting=" << t.GetDuration<std::milli>() << std::endl;
+  std::cout << "Time for sorting=" << t.GetDuration<std::milli>() << "ms" << std::endl;
 }
 
 template <typename T> struct MySortOp
@@ -44,13 +42,34 @@ template <typename T> struct StdSortOp
 
 int main()
 {
+  auto std_array_copy = data_std_array;
+  auto vec_data_copy = data_vec;
+
   std::cout << "My selection sort implementation ..." << std::endl;
   TestSort(MySortOp<std::array<int,NUM_ITEMS> >(data_std_array));
   TestSort(MySortOp<std::vector<int> >(data_vec));
 
   std::cout << "\n\nstd::sort algorithm implementation ..." << std::endl;
-  TestSort(StdSortOp<std::array<int, NUM_ITEMS> >(data_std_array));
-  TestSort(StdSortOp<std::vector<int> >(data_vec));
+  TestSort(StdSortOp<std::array<int, NUM_ITEMS> >(std_array_copy));
+  TestSort(StdSortOp<std::vector<int> >(vec_data_copy));
+
+  if (std_array_copy != data_std_array)
+  {
+    std::cout << "The sorted std::arrays do not match. There is something wrong in your sort implementation" << std::endl;
+  }
+  else
+  {
+    std::cout << "Your sorted algorithm gives the same result as the std implementation" << std::endl;
+  }
+
+  if (vec_data_copy != data_vec)
+  {
+    std::cout << "The sorted vectors do no match. There is something wrong in your sort implementation" << std::endl;
+  }
+  else
+  {
+    std::cout << "Your sorted algorithm gives the same result as the std implementation" << std::endl;
+  }
   return 0;
 }
 

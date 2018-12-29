@@ -4,11 +4,11 @@
 
 namespace AG
 {
-  template <typename T>
+  template <typename CTYP>
   class SelectionSort
   {
   public:
-    SelectionSort(T& _d) : mData(_d) {}
+    SelectionSort(CTYP& _d) : mData(_d) {}
 
     void Sort()
     {
@@ -41,7 +41,7 @@ namespace AG
         }
         return minIdx;
       }
-      T& mData;
+      CTYP& mData;
   };
 }
 

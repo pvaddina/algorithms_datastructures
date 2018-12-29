@@ -8,7 +8,7 @@
 #include "selection_sort.h"
 #include "insertion_sort.h"
 
-template <typename T> void TestSort(T& sortFn)
+template <typename CTYP> void TestSort(CTYP& sortFn)
 {
   Utils::Timer t;
   t.Start();
@@ -17,33 +17,49 @@ template <typename T> void TestSort(T& sortFn)
   std::cout << "Time for sorting=" << t.GetDuration<std::milli>() << "ms" << std::endl;
 }
 
-template <template <typename> class STYP, typename T> struct MySortOp
+template <typename STYP, typename CTYP> struct MySortOp
 {
-  MySortOp(T& _data) : data{ _data } {}
-  T& data;
+  MySortOp(CTYP& _data) : data{ _data } {}
+  CTYP& data;
   void operator()()
   {
-    typename STYP<T> sort{ data };
-    sort.Sort();
+    STYP sorter{ data };
+    sorter.Sort();
   }
 };
 
-template <typename T> using SelSortTyp = MySortOp<AG::SelectionSort, T >;
-template <typename T> using InsSortTyp = MySortOp<AG::InsertionSort, T>;
+template <typename CTYP> using SelSortTyp = MySortOp<AG::SelectionSort<CTYP>, CTYP>;
+template <typename CTYP, typename DTyp> using InsSortGap1 = MySortOp<AG::InsertionSort<CTYP, DTyp, 1>, CTYP>;
 
-template <typename T> struct StdSortOp
+template <typename CTYP> struct StdSortOp
 {
-  StdSortOp(T& _data) : data{ _data } {}
-  T& data;
+  StdSortOp(CTYP& _data) : data{ _data } {}
+  CTYP& data;
   void operator()()
   {
     std::sort(data.begin(), data.end());
   }
 };
 
+template <typename STYP, typename CTYP> struct ShellSortOp
+{
+  ShellSortOp(CTYP& _data, std::vector<size_t>&& g) : data{ _data }, gaps{ g } {}
+  CTYP& data;
+  std::vector<size_t> gaps;
+  void operator()()
+  {
+    for (auto& gap : gaps)
+    {
+      auto sorter{ STYP{data, gap} };
+      sorter.Sort();
+    }
+  }
+};
+template <typename CTYP, typename DTyp> using ShellSortTyp = ShellSortOp<AG::ShellSort<CTYP, DTyp>, CTYP>;
 
-template <typename T>
-void Validate(const T& myData, const T& stdData, const std::string implName)
+
+template <typename CTYP>
+void Validate(const CTYP& myData, const CTYP& stdData, const std::string implName)
 {
   if (myData != stdData)
   {
@@ -56,52 +72,131 @@ void Validate(const T& myData, const T& stdData, const std::string implName)
 }
 
 
-int main()
+void SortTesting()
 {
+  auto stdArrayCopy1 = Data::data_std_array;
+  auto stdVecDataCopy1 = Data::data_vec;
+
+  auto stdArrayCopy_std = Data::data_std_array;
+  auto stdVecDataCopy_std = Data::data_vec;
+
+  auto stdArrayCopy_hibbard = Data::data_std_array;
+  auto stdVecDataCopy_hibbard = Data::data_vec;
+
+  auto stdArrayCopy_papernov = Data::data_std_array;
+  auto stdVecDataCopy_papernov = Data::data_vec;
+
+  auto stdArrayCopy_pratt1 = Data::data_std_array;
+  auto stdVecDataCopy_pratt1 = Data::data_vec;
+
+  auto stdArrayCopy_pratt2 = Data::data_std_array;
+  auto stdVecDataCopy_pratt2 = Data::data_vec;
+
+  auto stdArrayCopy_sedgewick1 = Data::data_std_array;
+  auto stdVecDataCopy_sedgewick1 = Data::data_vec;
+
+  auto stdArrayCopy_sedgewick2 = Data::data_std_array;
+  auto stdVecDataCopy_sedgewick2 = Data::data_vec;
+
+  auto stdArrayCopy_sedgewick3 = Data::data_std_array;
+  auto stdVecDataCopy_sedgewick3 = Data::data_vec;
+
+  auto stdArrayCopy_tokuda = Data::data_std_array;
+  auto stdVecDataCopy_tokuda = Data::data_vec;
+
+  auto stdArrayCopy_ciura = Data::data_std_array;
+  auto stdVecDataCopy_ciura = Data::data_vec;
+
   std::cout << "My selection sort implementation ..." << std::endl;
   TestSort(SelSortTyp<Data::MyStdArray>(Data::data_std_array));
   TestSort(SelSortTyp<std::vector<int> >(Data::data_vec));
-
   std::cout << "Applying the selection sort on already sorted data ..." << std::endl;
   TestSort(SelSortTyp<Data::MyStdArray>(Data::data_std_array));
   TestSort(SelSortTyp<std::vector<int> >(Data::data_vec));
 
 
-
-  auto stdArrayCopy1 = Data::data_std_array;
-  auto stdVecDataCopy1 = Data::data_vec;
-
   std::cout << "\n\nMy insertion sort implementation ..." << std::endl;
-  TestSort(InsSortTyp<Data::MyStdArray>(stdArrayCopy1));
-  TestSort(InsSortTyp<std::vector<int> >(stdVecDataCopy1));
-
+  TestSort(InsSortGap1<Data::MyStdArray, int>(stdArrayCopy1));
+  TestSort(InsSortGap1<std::vector<int>, int>(stdVecDataCopy1));
   std::cout << "Applying the insertion sort on already sorted data ..." << std::endl;
-  TestSort(InsSortTyp<Data::MyStdArray>(stdArrayCopy1));
-  TestSort(InsSortTyp<std::vector<int> >(stdVecDataCopy1));
+  TestSort(InsSortGap1<Data::MyStdArray, int>(stdArrayCopy1));
+  TestSort(InsSortGap1<std::vector<int>, int>(stdVecDataCopy1));
 
 
+  std::cout << "\n\nShell sorting using Hibbard gaps ..." << std::endl;
+  TestSort(ShellSortTyp<Data::MyStdArray, int >(stdArrayCopy_hibbard, { 63,31,15,7,3,1 }));
+  TestSort(ShellSortTyp<std::vector<int>, int >(stdVecDataCopy_hibbard, { 63,31,15,7,3,1 }));
 
-  auto stdArrayCopy_std = Data::data_std_array;
-  auto stdVecDataCopy_std = Data::data_vec;
+  std::cout << "\n\nShell sorting using Papernov & Stasevich gaps ..." << std::endl;
+  TestSort(ShellSortTyp<Data::MyStdArray, int >(stdArrayCopy_papernov, { 65,33,17,9,5,3,1 }));
+  TestSort(ShellSortTyp<std::vector<int>, int >(stdVecDataCopy_papernov, { 65,33,17,9,5,3,1 }));
+
+  std::cout << "\n\nShell sorting using Pratt gaps version-1 ..." << std::endl;
+  TestSort(ShellSortTyp<Data::MyStdArray, int >(stdArrayCopy_pratt1, { 12,9,8,6,4,3,2,1 }));
+  TestSort(ShellSortTyp<std::vector<int>, int >(stdVecDataCopy_pratt1, { 12,9,8,6,4,3,2,1 }));
+
+  std::cout << "\n\nShell sorting using Pratt gaps version-2 ..." << std::endl;
+  TestSort(ShellSortTyp<Data::MyStdArray, int >(stdArrayCopy_pratt2, { 121,40,13,4,1 }));
+  TestSort(ShellSortTyp<std::vector<int>, int >(stdVecDataCopy_pratt2, { 121,40,13,4,1 }));
+
+  std::cout << "\n\nShell sorting using Sedgewick gaps version-1 ..." << std::endl;
+  TestSort(ShellSortTyp<Data::MyStdArray, int >(stdArrayCopy_sedgewick1, { 112,48,21,7,3,1 }));
+  TestSort(ShellSortTyp<std::vector<int>, int >(stdVecDataCopy_sedgewick1, { 112,48,21,7,3,1 }));
+
+  std::cout << "\n\nShell sorting using Sedgewick gaps version-2 ..." << std::endl;
+  TestSort(ShellSortTyp<Data::MyStdArray, int >(stdArrayCopy_sedgewick2, { 281,77,23,8,1 }));
+  TestSort(ShellSortTyp<std::vector<int>, int >(stdVecDataCopy_sedgewick2, { 281,77,23,8,1 }));
+
+  std::cout << "\n\nShell sorting using Sedgewick gaps version-3 ..." << std::endl;
+  TestSort(ShellSortTyp<Data::MyStdArray, int >(stdArrayCopy_sedgewick3, { 109,41,19,5,1 }));
+  TestSort(ShellSortTyp<std::vector<int>, int >(stdVecDataCopy_sedgewick3, { 109,41,19,5,1 }));
+
+  std::cout << "\n\nShell sorting using Tokuda gaps ..." << std::endl;
+  TestSort(ShellSortTyp<Data::MyStdArray, int >(stdArrayCopy_tokuda, { 103,46,20,9,4,1 }));
+  TestSort(ShellSortTyp<std::vector<int>, int >(stdVecDataCopy_tokuda, { 103,46,20,9,4,1 }));
+
+  std::cout << "\n\nShell sorting using Ciura gaps ..." << std::endl;
+  TestSort(ShellSortTyp<Data::MyStdArray, int >(stdArrayCopy_ciura, { 701,301,132,57,23,10,4,1 }));
+  TestSort(ShellSortTyp<std::vector<int>, int >(stdVecDataCopy_ciura, { 701,301,132,57,23,10,4,1 }));
+
+
 
   std::cout << "\n\nstd::sort algorithm implementation ..." << std::endl;
   TestSort(StdSortOp<Data::MyStdArray >(stdArrayCopy_std));
   TestSort(StdSortOp<std::vector<int> >(stdVecDataCopy_std));
-
   std::cout << "Applying std::sort algorithm on already sorted data ..." << std::endl;
   TestSort(StdSortOp<Data::MyStdArray >(stdArrayCopy_std));
   TestSort(StdSortOp<std::vector<int> >(stdVecDataCopy_std));
 
 
-
-
   std::cout << std::endl << std::endl;
   Validate(Data::data_std_array, stdArrayCopy_std, "Selection");
   Validate(Data::data_vec, stdVecDataCopy_std, "Selection");
-
   Validate(stdArrayCopy1, stdArrayCopy_std, "Insertion");
   Validate(stdVecDataCopy1, stdVecDataCopy_std, "Insertion");
+  Validate(stdArrayCopy_hibbard, stdArrayCopy_std, "Shellsort_Hibbard");
+  Validate(stdVecDataCopy_hibbard, stdVecDataCopy_std, "Shellsort_Hibbard");
+  Validate(stdArrayCopy_papernov, stdArrayCopy_std, "Shellsort_Papernov");
+  Validate(stdVecDataCopy_papernov, stdVecDataCopy_std, "Shellsort_Papernov");
+  Validate(stdArrayCopy_pratt1, stdArrayCopy_std, "Shellsort_Pratt1");
+  Validate(stdVecDataCopy_pratt1, stdVecDataCopy_std, "Shellsort_Pratt1");
+  Validate(stdArrayCopy_pratt2, stdArrayCopy_std, "Shellsort_Pratt2");
+  Validate(stdVecDataCopy_pratt2, stdVecDataCopy_std, "Shellsort_Pratt2");
+  Validate(stdArrayCopy_sedgewick1, stdArrayCopy_std, "Shellsort_Sedgewick1");
+  Validate(stdVecDataCopy_sedgewick1, stdVecDataCopy_std, "Shellsort_Sedgewick1");
+  Validate(stdArrayCopy_sedgewick2, stdArrayCopy_std, "Shellsort_Sedgewick2");
+  Validate(stdVecDataCopy_sedgewick2, stdVecDataCopy_std, "Shellsort_Sedgewick2");
+  Validate(stdArrayCopy_sedgewick3, stdArrayCopy_std, "Shellsort_Sedgewick3");
+  Validate(stdVecDataCopy_sedgewick3, stdVecDataCopy_std, "Shellsort_Sedgewick3");
+  Validate(stdArrayCopy_tokuda, stdArrayCopy_std, "Shellsort_Tokuda");
+  Validate(stdVecDataCopy_tokuda, stdVecDataCopy_std, "Shellsort_Tokuda");
+  Validate(stdArrayCopy_ciura, stdArrayCopy_std, "Shellsort_Ciura");
+  Validate(stdVecDataCopy_ciura, stdVecDataCopy_std, "Shellsort_Ciura");
+}
 
-  return 0;
+
+int main()
+{
+  SortTesting();
 }
 

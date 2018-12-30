@@ -19,15 +19,15 @@ namespace Utils
   public:
     void Start() { mStart = std::chrono::steady_clock::now(); }
     void Stop()  { mStop = std::chrono::steady_clock::now(); } 
-    template <typename T>
-    typename std::chrono::duration<double, T>::rep GetDuration() { return std::chrono::duration<double, T>(mStop - mStart).count(); }
+    template <typename CTYP>
+    typename std::chrono::duration<double, CTYP>::rep GetDuration() { return std::chrono::duration<double, CTYP>(mStop - mStart).count(); }
   private:
     std::chrono::steady_clock::time_point mStart;
     std::chrono::steady_clock::time_point mStop;
   };
 
-  template <typename T, size_t SZ>
-  size_t ArrayLen(T(&)[SZ]) { return SZ; }
+  template <typename CTYP, size_t SZ>
+  size_t ArrayLen(CTYP(&)[SZ]) { return SZ; }
 }
 
 

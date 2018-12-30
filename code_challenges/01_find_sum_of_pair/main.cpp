@@ -1,5 +1,6 @@
 #include <iostream>
 #include <vector>
+#include <string>
 #include <unordered_set>
 
 //
@@ -45,19 +46,52 @@ std::vector<std::pair<int, int> > FindPairs(const std::vector<int>& data, const 
   return fPairs;
 }
 
+void PrintDs(const std::string& str, std::vector<int>& v)
+{
+  std::cout << str << " = {";
+  auto sz = v.size();
+  auto i = 0;
+  for (auto& item : v)
+  {
+    if ( i+1 == sz )
+      std::cout << item;
+    else
+      std::cout << item << ", ";
+    ++i;
+  }
+  std::cout << "};\n";
+}
+
 int main()
 {
-  std::cout << ContainsPairWithSum(a, 9) << std::endl;
-  std::vector<std::pair<int, int> > pairs = FindPairs(a, 9);
-  for (auto i : pairs)
-  {
-    std::cout << i.first << " " << i.second << std::endl;
-  }
+  PrintDs("a", a);
+  PrintDs("b", b);
+  std::cout << std::endl;
 
-  std::vector<std::pair<int, int> > pairs1 = FindPairs(b, 33);
-  for (auto i : pairs1)
+  constexpr auto a_sumpair = 9;
+  constexpr auto b_sumpair = 33;
+
+  while (true)
   {
-    std::cout << i.first << " " << i.second << std::endl;
+    std::string dstyp;
+    std::string strSum;
+    std::cout << "Enter the DS type: ";
+    std::getline(std::cin, dstyp);
+    auto ds = a;
+    if (dstyp == "b") { ds = b; }
+
+    std::cout << "Enter the value you are looking for: ";
+    std::getline(std::cin, strSum);
+    auto sum = std::stoi(strSum);
+
+    std::cout << "Does the container has a pair whose sum is:" << sum << "? " << ContainsPairWithSum(ds, sum) << std::endl;
+    std::cout << "The pairs whose sum is " << sum << " are given below:" << std::endl;
+    std::vector<std::pair<int, int> > pairs = FindPairs(ds, sum);
+    for (auto i : pairs)
+    {
+      std::cout << "      " << i.first << " " << i.second << std::endl;
+    }
+    std::cout << std::endl;
   }
 
   return 0;

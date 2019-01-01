@@ -63,7 +63,7 @@ namespace AG
 
       void Print(const std::string& s)
       {
-        const int N = mIds.size();
+        const size_t N = mIds.size();
         std::cout << s;
         for (auto i = 0; i<N; ++i)
         {

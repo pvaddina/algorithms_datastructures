@@ -43,9 +43,9 @@ namespace AG
       // Loop-2: i = 4; mIds[4] = 2; Again, mIds[4] = mIds[mIds[4]] = mIds[2] = 2; 
       //         After this loop the value of root of '4' does not change. But if there were something
       //         else as the root of 2, then it could be have been the new root. 
-      int Root(const int p)
+      size_t Root(const size_t p)
       {
-        int i = p;
+        size_t i = p;
         while(mIds[i] != i)
         {
           mIds[i] = mIds[mIds[i]];
@@ -54,7 +54,7 @@ namespace AG
         return i;
       }
 
-      bool Connected(const int p, const int q)
+      bool Connected(const size_t p, const size_t q)
       {
         return Root(p) == Root(q);
       }
@@ -83,7 +83,7 @@ namespace AG
         // in the sub tree still contain the older largest values. Since 
         // we always see the value stored in the root, it shall contain the 
         // correct value always.
-        auto unionP2Q = [&](const int p, const int q) {
+        auto unionP2Q = [&](const size_t p, const size_t q) {
           mIds[p] = mIds[q];
           mWeights[q] += mWeights[p];
           mWeights[p] = 0;
@@ -107,7 +107,7 @@ namespace AG
 
       void Print(const std::string& s)
       {
-        const int N = mIds.size();
+        const size_t N = mIds.size();
         std::cout << s;
         for (auto i = 0; i<N; ++i)
         {

@@ -1,6 +1,6 @@
 import random
 
-MAX_SIZE = 20
+MAX_SIZE = 10000
 
 dataTypeProps = {
             "array": {

@@ -41,7 +41,7 @@ namespace AG
       {
         const int id2Change = mIds[p];
         const int targetId = mIds[q];
-        const int N = mIds.size();
+        const size_t N = mIds.size();
         mIds[p] = targetId;
         for (auto i = 0; i<N; ++i)
         {
@@ -54,7 +54,7 @@ namespace AG
 
       void Print(const std::string& s)
       {
-        const int N = mIds.size();
+        const size_t N = mIds.size();
         std::cout << s;
         for (auto i = 0; i<N; ++i)
         {

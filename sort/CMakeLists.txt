@@ -5,6 +5,7 @@ project(my-sort-algorithms-testing)
 
 set(SOURCES selection_sort.h 
             insertion_sort.h
+            merge_sort.h
             ../common/data/data_vec_10000.h 
             ../common/data/data_array_10000.h 
             ../common/data/data_std_array_10000.h 

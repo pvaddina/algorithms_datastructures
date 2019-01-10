@@ -7,6 +7,7 @@
 
 #include "selection_sort.h"
 #include "insertion_sort.h"
+#include "merge_sort.h"
 
 template <typename CTYP> void TestSort(CTYP& sortFn)
 {
@@ -29,6 +30,7 @@ template <typename STYP, typename CTYP> struct MySortOp
 };
 
 template <typename CTYP> using SelSortTyp = MySortOp<AG::SelectionSort<CTYP>, CTYP>;
+template <typename CTYP> using MergeSortTyp = MySortOp<AG::MergeSort<CTYP>, CTYP>;
 template <typename CTYP, typename DTyp> using InsSortGap1 = MySortOp<AG::InsertionSort<CTYP, DTyp, 1>, CTYP>;
 
 template <typename CTYP> struct StdSortOp
@@ -63,7 +65,18 @@ void Validate(const CTYP& myData, const CTYP& stdData, const std::string implNam
 {
   if (myData != stdData)
   {
-    std::cout << "Error !!! There is something wrong in your " << implName << " sort implementation" << std::endl;
+    size_t startIdx = 9999999;
+    for (size_t i = 0; i < myData.size(); ++i)
+    {
+      if (myData[i] != stdData[i])
+      {
+        startIdx = i;
+        break;
+      }
+    }
+    for (auto j = startIdx-5; j < startIdx + 5; ++j)
+      std::cout << myData[j] << "<-->" << stdData[j] << std::endl;
+    std::cout << "\nError !!! There is something wrong in your " << implName << " sort implementation" << std::endl;
   }
   else
   {
@@ -72,7 +85,7 @@ void Validate(const CTYP& myData, const CTYP& stdData, const std::string implNam
 }
 
 
-void SortTesting()
+void TestCompareAllSortAlgos()
 {
   auto stdArrayCopy1 = Data::data_std_array_10000;
   auto stdVecDataCopy1 = Data::data_vec_10000;
@@ -107,14 +120,26 @@ void SortTesting()
   auto stdArrayCopy_ciura = Data::data_std_array_10000;
   auto stdVecDataCopy_ciura = Data::data_vec_10000;
 
+  auto stdArrayCopy_mergesort = Data::data_std_array_10000;
+  auto stdVecDataCopy_mergesort = Data::data_vec_10000;
+
+#if 0
   std::cout << "My selection sort implementation ..." << std::endl;
   TestSort(SelSortTyp<Data::MyStdArray10000>(Data::data_std_array_10000));
   TestSort(SelSortTyp<std::vector<int> >(Data::data_vec_10000));
   std::cout << "Applying the selection sort on already sorted data ..." << std::endl;
   TestSort(SelSortTyp<Data::MyStdArray10000>(Data::data_std_array_10000));
   TestSort(SelSortTyp<std::vector<int> >(Data::data_vec_10000));
+#endif
 
+  std::cout << "\n\nMy merge sort implementation ..." << std::endl;
+  TestSort(MergeSortTyp<Data::MyStdArray10000>(stdArrayCopy_mergesort));
+  TestSort(MergeSortTyp<std::vector<int> >(stdVecDataCopy_mergesort));
+  std::cout << "Applying the merge sort on already sorted data ..." << std::endl;
+  TestSort(MergeSortTyp<Data::MyStdArray10000>(stdArrayCopy_mergesort));
+  TestSort(MergeSortTyp<std::vector<int> >(stdVecDataCopy_mergesort));
 
+#if 0
   std::cout << "\n\nMy insertion sort implementation ..." << std::endl;
   TestSort(InsSortGap1<Data::MyStdArray10000, int>(stdArrayCopy1));
   TestSort(InsSortGap1<std::vector<int>, int>(stdVecDataCopy1));
@@ -158,8 +183,7 @@ void SortTesting()
   std::cout << "\n\nShell sorting using Ciura gaps ..." << std::endl;
   TestSort(ShellSortTyp<Data::MyStdArray10000, int >(stdArrayCopy_ciura, { 701,301,132,57,23,10,4,1 }));
   TestSort(ShellSortTyp<std::vector<int>, int >(stdVecDataCopy_ciura, { 701,301,132,57,23,10,4,1 }));
-
-
+#endif
 
   std::cout << "\n\nstd::sort algorithm implementation ..." << std::endl;
   TestSort(StdSortOp<Data::MyStdArray10000 >(stdArrayCopy_std));
@@ -170,33 +194,56 @@ void SortTesting()
 
 
   std::cout << std::endl << std::endl;
-  Validate(Data::data_std_array_10000, stdArrayCopy_std, "Selection");
-  Validate(Data::data_vec_10000, stdVecDataCopy_std, "Selection");
-  Validate(stdArrayCopy1, stdArrayCopy_std, "Insertion");
-  Validate(stdVecDataCopy1, stdVecDataCopy_std, "Insertion");
-  Validate(stdArrayCopy_hibbard, stdArrayCopy_std, "Shellsort_Hibbard");
-  Validate(stdVecDataCopy_hibbard, stdVecDataCopy_std, "Shellsort_Hibbard");
-  Validate(stdArrayCopy_papernov, stdArrayCopy_std, "Shellsort_Papernov");
-  Validate(stdVecDataCopy_papernov, stdVecDataCopy_std, "Shellsort_Papernov");
-  Validate(stdArrayCopy_pratt1, stdArrayCopy_std, "Shellsort_Pratt1");
-  Validate(stdVecDataCopy_pratt1, stdVecDataCopy_std, "Shellsort_Pratt1");
-  Validate(stdArrayCopy_pratt2, stdArrayCopy_std, "Shellsort_Pratt2");
-  Validate(stdVecDataCopy_pratt2, stdVecDataCopy_std, "Shellsort_Pratt2");
-  Validate(stdArrayCopy_sedgewick1, stdArrayCopy_std, "Shellsort_Sedgewick1");
-  Validate(stdVecDataCopy_sedgewick1, stdVecDataCopy_std, "Shellsort_Sedgewick1");
-  Validate(stdArrayCopy_sedgewick2, stdArrayCopy_std, "Shellsort_Sedgewick2");
-  Validate(stdVecDataCopy_sedgewick2, stdVecDataCopy_std, "Shellsort_Sedgewick2");
-  Validate(stdArrayCopy_sedgewick3, stdArrayCopy_std, "Shellsort_Sedgewick3");
-  Validate(stdVecDataCopy_sedgewick3, stdVecDataCopy_std, "Shellsort_Sedgewick3");
-  Validate(stdArrayCopy_tokuda, stdArrayCopy_std, "Shellsort_Tokuda");
-  Validate(stdVecDataCopy_tokuda, stdVecDataCopy_std, "Shellsort_Tokuda");
-  Validate(stdArrayCopy_ciura, stdArrayCopy_std, "Shellsort_Ciura");
-  Validate(stdVecDataCopy_ciura, stdVecDataCopy_std, "Shellsort_Ciura");
+  //Validate(Data::data_std_array_10000, stdArrayCopy_std, "Selection");
+  //Validate(Data::data_vec_10000, stdVecDataCopy_std, "Selection");
+  Validate(stdArrayCopy_mergesort, stdArrayCopy_std, "Merge");
+  Validate(stdVecDataCopy_mergesort, stdVecDataCopy_std, "Merge");
+  //Validate(stdArrayCopy1, stdArrayCopy_std, "Insertion");
+  //Validate(stdVecDataCopy1, stdVecDataCopy_std, "Insertion");
+  //Validate(stdArrayCopy_hibbard, stdArrayCopy_std, "Shellsort_Hibbard");
+  //Validate(stdVecDataCopy_hibbard, stdVecDataCopy_std, "Shellsort_Hibbard");
+  //Validate(stdArrayCopy_papernov, stdArrayCopy_std, "Shellsort_Papernov");
+  //Validate(stdVecDataCopy_papernov, stdVecDataCopy_std, "Shellsort_Papernov");
+  //Validate(stdArrayCopy_pratt1, stdArrayCopy_std, "Shellsort_Pratt1");
+  //Validate(stdVecDataCopy_pratt1, stdVecDataCopy_std, "Shellsort_Pratt1");
+  //Validate(stdArrayCopy_pratt2, stdArrayCopy_std, "Shellsort_Pratt2");
+  //Validate(stdVecDataCopy_pratt2, stdVecDataCopy_std, "Shellsort_Pratt2");
+  //Validate(stdArrayCopy_sedgewick1, stdArrayCopy_std, "Shellsort_Sedgewick1");
+  //Validate(stdVecDataCopy_sedgewick1, stdVecDataCopy_std, "Shellsort_Sedgewick1");
+  //Validate(stdArrayCopy_sedgewick2, stdArrayCopy_std, "Shellsort_Sedgewick2");
+  //Validate(stdVecDataCopy_sedgewick2, stdVecDataCopy_std, "Shellsort_Sedgewick2");
+  //Validate(stdArrayCopy_sedgewick3, stdArrayCopy_std, "Shellsort_Sedgewick3");
+  //Validate(stdVecDataCopy_sedgewick3, stdVecDataCopy_std, "Shellsort_Sedgewick3");
+  //Validate(stdArrayCopy_tokuda, stdArrayCopy_std, "Shellsort_Tokuda");
+  //Validate(stdVecDataCopy_tokuda, stdVecDataCopy_std, "Shellsort_Tokuda");
+  //Validate(stdArrayCopy_ciura, stdArrayCopy_std, "Shellsort_Ciura");
+  //Validate(stdVecDataCopy_ciura, stdVecDataCopy_std, "Shellsort_Ciura");
+}
+
+void SimpleMergeSortTesting()
+{
+  std::vector<int> dataEven{ 3,5,2,43,2,23,99,23,1,23,1,6,8,2,3,1,99,9,5,2,43,2,23,99,23,1,23,1,6,8,2,3,1,99,9,5,2,43,2,23,99,23,1,23,1,6,8,2,3,1,99,9,5,2,43,2,23,99,23,1,23,1,6,8,2,3,1,99,9 };
+
+  //std::vector<int> dataEven{ 3,5,2,43,2,23,99,23};
+  AG::MergeSort<std::vector<int> > evenSorter{ dataEven };
+  evenSorter.Sort();
+  for (auto& i : dataEven)
+    std::cout << i << " ";
+  std::cout << "\n";
+
+  std::vector<int> dataOdd{ 3,5,2,43,2,23,99,23,45 };
+  AG::MergeSort<std::vector<int> > oddSorter{ dataOdd };
+  oddSorter.Sort();
+  for (auto& i : dataOdd)
+    std::cout << i << " ";
+
+  std::cout << "\n\n";
 }
 
 
 int main()
 {
-  SortTesting();
+  //SimpleMergeSortTesting();
+  TestCompareAllSortAlgos();
 }
 

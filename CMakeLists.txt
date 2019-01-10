@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.13)
 
-project(Algorithms)
+project(Algorithms-and-Datastructures)
 
 add_subdirectory(code_challenges)
 add_subdirectory(dequeue)

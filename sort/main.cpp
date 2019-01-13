@@ -1,6 +1,7 @@
 #include <iostream>
 #include <vector>
 #include <string>
+#include <algorithm>
 #include "timer.h"
 #include "data/data_vec_10000.h"
 #include "data/data_std_array_10000.h"
@@ -9,7 +10,7 @@
 #include "insertion_sort.h"
 #include "merge_sort.h"
 
-template <typename CTYP> void TestSort(CTYP& sortFn)
+template <typename CTYP> void TestSort(CTYP&& sortFn)
 {
   Utils::Timer t;
   t.Start();

@@ -32,64 +32,78 @@ namespace AG
 
       // Step-2: Sort the data container now
       const size_t sz = mData.size();
-      DoSort(mData, auxiliaryData, 0, sz - 1);
+      DoSort(mData, auxiliaryData, 0, sz);
     }
 
   private:
-    void DoSort(CTYP& data, CTYP& auxData, const size_t start, const size_t end)
+    void DoSort(CTYP& data, CTYP& auxData, const size_t start, const size_t size)
     {
-      const auto sz = end - start + 1;
-      const auto half = sz / 2;
-      if (half == 1)
+      const auto half = size / 2;
+      if (size > 2)
       {
-        if (auxData[start] > auxData[start+1])
-          AG::swap(auxData[start], auxData[start+1]);
-
-        if (sz == 3)
-          DoMerge(data, auxData, start, start+1, end, end);
+        DoSort(data, auxData, start, half);
+        DoSort(data, auxData, start+half, size-half);
+        DoMerge(data, auxData, start, size);
       }
-      else if (half > 1)
+      else if (size == 2)
       {
-        auto startOne = start;
-        auto endOne = start + half - 1;
-        auto startTwo = start + half;
-        auto endTwo = end;
-        DoSort(data, auxData, startOne, endOne);
-        DoSort(data, auxData, startTwo, endTwo);
-        DoMerge(data, auxData, startOne, endOne, startTwo, endTwo);
+        if (auxData[start] > auxData[start + 1])
+          AG::swap(auxData[start], auxData[start + 1]);
+        data[start] = auxData[start];
+        data[start + 1] = auxData[start+1];
+      }
+      else if (size == 1)
+      {
+        data[start] = auxData[start];
       }
     }
 
-    void DoMerge(CTYP& data, CTYP& auxData
-               , size_t idxOne, const size_t endOne
-               , size_t idxTwo, const size_t endTwo)
+    void DoMerge(CTYP& data, CTYP& auxData, size_t start, size_t size)
     {
-      auto idxAuxData = idxOne;
-      auto idxData = idxOne;
-      size_t sz = (endOne - idxOne + 1) + (endTwo - idxTwo + 1);
+      auto i = start;
+      auto sz = size;
+      auto half = size / 2;
+      auto j = i + half;
+      auto idxData = start;
 
       while (sz > 0)
       {
-        if (idxTwo > endTwo)
+        if (i < start+half && j < start+size)
         {
-          //asset(idxOne <= endOne);
-          data[idxData] = auxData[idxOne];
+          if (auxData[i] < auxData[j])
+          {
+            data[idxData] = auxData[i];
+            ++i;
+          }
+          else if (auxData[i] > auxData[j])
+          {
+            data[idxData] = auxData[j];
+            ++j;
+          }
+          else
+          {
+            data[idxData] = auxData[i];
+            ++i;
+          }
         }
-        else if (idxOne <= endOne && auxData[idxOne] < auxData[idxTwo])
+        else
         {
-          data[idxData] = auxData[idxOne];
-          ++idxOne;
+          if (i < start+half)
+          {
+            data[idxData] = auxData[i];
+            ++i;
+          }
+          else if (j < start+size)
+          {
+            data[idxData] = auxData[j];
+            ++j;
+          }
         }
-        else if (idxTwo <= endTwo)
-        {
-          data[idxData] = auxData[idxTwo];
-          ++idxTwo;
-        }
-        ++idxData;
         --sz;
+        ++idxData;
       }
-      
-      for (auto i=idxAuxData; i<=endTwo; ++i)
+
+      for (auto i=start; i<start+size; ++i)
       {
         auxData[i] = data[i];
       }

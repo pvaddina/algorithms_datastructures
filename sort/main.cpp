@@ -66,18 +66,7 @@ void Validate(const CTYP& myData, const CTYP& stdData, const std::string implNam
 {
   if (myData != stdData)
   {
-    size_t startIdx = 9999999;
-    for (size_t i = 0; i < myData.size(); ++i)
-    {
-      if (myData[i] != stdData[i])
-      {
-        startIdx = i;
-        break;
-      }
-    }
-    for (auto j = startIdx-5; j < startIdx + 5; ++j)
-      std::cout << myData[j] << "<-->" << stdData[j] << std::endl;
-    std::cout << "\nError !!! There is something wrong in your " << implName << " sort implementation" << std::endl;
+    std::cout << "Error !!! There is something wrong in your " << implName << " sort implementation" << std::endl;
   }
   else
   {

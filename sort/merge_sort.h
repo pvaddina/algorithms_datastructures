@@ -68,36 +68,25 @@ namespace AG
 
       while (sz > 0)
       {
-        if (i < start+half && j < start+size)
+        if (j >= start + size)
         {
-          if (auxData[i] < auxData[j])
-          {
-            data[idxData] = auxData[i];
-            ++i;
-          }
-          else if (auxData[i] > auxData[j])
-          {
-            data[idxData] = auxData[j];
-            ++j;
-          }
-          else
-          {
-            data[idxData] = auxData[i];
-            ++i;
-          }
+          data[idxData] = auxData[i];
+          ++i;
+        }
+        else if (i >= start + half)
+        {
+          data[idxData] = auxData[j];
+          ++j;
+        }
+        else if (auxData[i] < auxData[j])
+        {
+          data[idxData] = auxData[i];
+          ++i;
         }
         else
         {
-          if (i < start+half)
-          {
-            data[idxData] = auxData[i];
-            ++i;
-          }
-          else if (j < start+size)
-          {
-            data[idxData] = auxData[j];
-            ++j;
-          }
+          data[idxData] = auxData[j];
+          ++j;
         }
         --sz;
         ++idxData;
@@ -108,7 +97,6 @@ namespace AG
         auxData[i] = data[i];
       }
     }
-
 
   private:
     CTYP& mData;

@@ -39,22 +39,11 @@ namespace AG
     void DoSort(CTYP& data, CTYP& auxData, const size_t start, const size_t size)
     {
       const auto half = size / 2;
-      if (size > 2)
+      if (size > 1)
       {
         DoSort(data, auxData, start, half);
         DoSort(data, auxData, start+half, size-half);
         DoMerge(data, auxData, start, size);
-      }
-      else if (size == 2)
-      {
-        if (auxData[start] > auxData[start + 1])
-          AG::swap(auxData[start], auxData[start + 1]);
-        data[start] = auxData[start];
-        data[start + 1] = auxData[start+1];
-      }
-      else if (size == 1)
-      {
-        data[start] = auxData[start];
       }
     }
 

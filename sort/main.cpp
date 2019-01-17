@@ -5,6 +5,7 @@
 #include "timer.h"
 #include "data/data_vec_10000.h"
 #include "data/data_std_array_10000.h"
+#include "mergesort_tests.h"
 
 #include "selection_sort.h"
 #include "insertion_sort.h"
@@ -32,6 +33,7 @@ template <typename STYP, typename CTYP> struct MySortOp
 
 template <typename CTYP> using SelSortTyp = MySortOp<AG::SelectionSort<CTYP>, CTYP>;
 template <typename CTYP> using MergeSortTyp = MySortOp<AG::MergeSort<CTYP>, CTYP>;
+template <typename CTYP> using BUMergeSortTyp = MySortOp<AG::BottomUpMergeSort<CTYP>, CTYP>;
 template <typename CTYP, typename DTyp> using InsSortGap1 = MySortOp<AG::InsertionSort<CTYP, DTyp, 1>, CTYP>;
 
 template <typename CTYP> struct StdSortOp
@@ -113,6 +115,9 @@ void TestCompareAllSortAlgos()
   auto stdArrayCopy_mergesort = Data::data_std_array_10000;
   auto stdVecDataCopy_mergesort = Data::data_vec_10000;
 
+  auto stdArrayCopy_bumergesort = Data::data_std_array_10000;
+  auto stdVecDataCopy_bumergesort = Data::data_vec_10000;
+
   std::cout << "My selection sort implementation ..." << std::endl;
   TestSort(SelSortTyp<Data::MyStdArray10000>(Data::data_std_array_10000));
   TestSort(SelSortTyp<std::vector<int> >(Data::data_vec_10000));
@@ -126,6 +131,13 @@ void TestCompareAllSortAlgos()
   std::cout << "Applying the merge sort on already sorted data ..." << std::endl;
   TestSort(MergeSortTyp<Data::MyStdArray10000>(stdArrayCopy_mergesort));
   TestSort(MergeSortTyp<std::vector<int> >(stdVecDataCopy_mergesort));
+
+  std::cout << "\n\nMy bottom up merge sort implementation ..." << std::endl;
+  TestSort(BUMergeSortTyp<Data::MyStdArray10000>(stdArrayCopy_bumergesort));
+  TestSort(BUMergeSortTyp<std::vector<int> >(stdVecDataCopy_bumergesort));
+  std::cout << "Applying the bottom up merge sort on already sorted data ..." << std::endl;
+  TestSort(BUMergeSortTyp<Data::MyStdArray10000>(stdArrayCopy_bumergesort));
+  TestSort(BUMergeSortTyp<std::vector<int> >(stdVecDataCopy_bumergesort));
 
   std::cout << "\n\nMy insertion sort implementation ..." << std::endl;
   TestSort(InsSortGap1<Data::MyStdArray10000, int>(stdArrayCopy1));
@@ -184,6 +196,8 @@ void TestCompareAllSortAlgos()
   Validate(Data::data_vec_10000, stdVecDataCopy_std, "Selection");
   Validate(stdArrayCopy_mergesort, stdArrayCopy_std, "Merge");
   Validate(stdVecDataCopy_mergesort, stdVecDataCopy_std, "Merge");
+  Validate(stdArrayCopy_bumergesort, stdArrayCopy_std, "Bottomup Merge");
+  Validate(stdVecDataCopy_bumergesort, stdVecDataCopy_std, "Bottomup Merge");
   Validate(stdArrayCopy1, stdArrayCopy_std, "Insertion");
   Validate(stdVecDataCopy1, stdVecDataCopy_std, "Insertion");
   Validate(stdArrayCopy_hibbard, stdArrayCopy_std, "Shellsort_Hibbard");
@@ -206,41 +220,9 @@ void TestCompareAllSortAlgos()
   Validate(stdVecDataCopy_ciura, stdVecDataCopy_std, "Shellsort_Ciura");
 }
 
-void SimpleMergeSortTesting()
-{
-  auto doTest = [](std::vector<int>& data) {
-    AG::MergeSort<std::vector<int> > sorter{ data };
-    sorter.Sort();
-    for (auto& i : data)
-      std::cout << i << " ";
-    std::cout << "\n";
-  };
-
-  std::vector<int> longAndRepeated{ 3,5,2,43,2,23,99,23,1,23,1,6,8,2,3,1,99,9,5,2,43,2,23,99,23,1,23,1,6,8,2,3,1,99,9,5,2,43,2,23,99,23,1,23,1,6,8,2,3,1,99,9,5,2,43,2,23,99,23,1,23,1,6,8,2,3,1,99,9 };
-  doTest(longAndRepeated);
-
-  std::vector<int> dataEven{ 3,5,2,43,2,23,99,5};
-  doTest(dataEven);
-
-  std::vector<int> dataOdd{ 3,5,2,43,2,23,99,23,45 };
-  doTest(dataOdd);
-
-  std::vector<int> one{ 3 };
-  doTest(one);
-
-  std::vector<int> two{ 6, 3 };
-  doTest(two);
-
-  std::vector<int> three{ 9, 2, 3 };
-  doTest(three);
-
-  std::cout << "\n\n";
-}
-
-
 int main()
 {
-  SimpleMergeSortTesting();
+  RunMergesortTests();
   TestCompareAllSortAlgos();
 }
 

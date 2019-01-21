@@ -6,6 +6,7 @@
 #include "data/data_vec_10000.h"
 #include "data/data_std_array_10000.h"
 #include "mergesort_tests.h"
+#include "quicksort_tests.h"
 
 #include "selection_sort.h"
 #include "insertion_sort.h"
@@ -222,7 +223,8 @@ void TestCompareAllSortAlgos()
 
 int main()
 {
-  RunMergesortTests();
-  TestCompareAllSortAlgos();
+  RunQuickSortTests();
+  //RunMergesortTests();
+  //TestCompareAllSortAlgos();
 }
 

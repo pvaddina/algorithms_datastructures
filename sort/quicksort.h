@@ -2,6 +2,7 @@
 
 #include "common.h"
 #include "shuffle.h"
+#include "merge_sort.h"
 
 namespace AG
 {
@@ -22,7 +23,7 @@ namespace AG
         std::cout << i << " ";
 
       // Step-2: Partition the data structure
-      PartitionDataContainer();
+      auto partIdx = PartitionDataContainer();
 
       std::cout << "\nAfter partitioning: ";
       for (const auto& j : mData)
@@ -30,12 +31,16 @@ namespace AG
 
       // Step-3: Sort the left of the partition element
       // Sort the right of the partition element
-      //const size_t sz = mData.size();
-      //DoSort(mData, auxiliaryData, 0, sz);
+      AG::MergeSort<CTYP> sorter{ mData };
+      if (partIdx > 0)
+        sorter.Sort(0, partIdx - 1);
+      const size_t lastIdx = mData.size() - 1;
+      if (partIdx < lastIdx)
+        sorter.Sort(partIdx+1, lastIdx);
     }
 
   private:
-    void PartitionDataContainer()
+    size_t PartitionDataContainer()
     {
       size_t i = 1;
       size_t j = mData.size() - 1;
@@ -69,9 +74,9 @@ namespace AG
 
         if (i < j)
           AG::swap(mData[i], mData[j]);
-        else if (i > j)
-          AG::swap(mData[0], mData[j]);
       }
+      AG::swap(mData[0], mData[j]);
+      return j;
     }
 
   private:

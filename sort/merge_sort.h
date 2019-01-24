@@ -20,6 +20,16 @@ namespace AG
       DoSort(mData, auxiliaryData, 0, sz);
     }
 
+    void Sort(const size_t start, const size_t end)
+    {
+      // Step-1: Make a copy of the unsorted data first
+      auto auxiliaryData = mData;
+
+      // Step-2: Sort the data container now
+      size_t ct = end - start + 1;
+      DoSort(mData, auxiliaryData, start, ct);
+    }
+
   private:
     void DoSort(CTYP& data, CTYP& auxData, const size_t start, const size_t size)
     {

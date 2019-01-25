@@ -14,29 +14,32 @@ namespace AG
 
     void Sort()
     {
-      // Step-1: Randomly shuffle the data
-      AG::Shuffler<CTYP> sh{ mData };
-      sh.Shuffle();
+      // Randomly, with no empherical/mathematical proof, disable the 
+      // shuffle and partitioning
+      constexpr int MIN_ALLOWED_SIZE = 10;
+      const auto size = mData.size();
+      if (size > MIN_ALLOWED_SIZE)
+      {
+        // Step-1: Randomly shuffle the data
+        AG::Shuffler<CTYP> sh{ mData };
+        sh.Shuffle();
 
-      std::cout << "\nAfter shuffling: ";
-      for (const auto& i : mData)
-        std::cout << i << " ";
+        auto partIdx = PartitionDataContainer();
 
-      // Step-2: Partition the data structure
-      auto partIdx = PartitionDataContainer();
-
-      std::cout << "\nAfter partitioning: ";
-      for (const auto& j : mData)
-        std::cout << j << " ";
-
-      // Step-3: Sort the left of the partition element
-      // Sort the right of the partition element
-      AG::MergeSort<CTYP> sorter{ mData };
-      if (partIdx > 0)
-        sorter.Sort(0, partIdx - 1);
-      const size_t lastIdx = mData.size() - 1;
-      if (partIdx < lastIdx)
-        sorter.Sort(partIdx+1, lastIdx);
+        // Step-3: Sort the left of the partition element
+        // Sort the right of the partition element
+        AG::MergeSort<CTYP> sorter{ mData };
+        if (partIdx > 0)
+          sorter.Sort(0, partIdx - 1);
+        const size_t lastIdx = size - 1;
+        if (partIdx < lastIdx)
+          sorter.Sort(partIdx+1, lastIdx);
+      }
+      else
+      {
+        AG::MergeSort<CTYP> sorter{ mData };
+        sorter.Sort();
+      }
     }
 
   private:
@@ -46,7 +49,6 @@ namespace AG
       size_t j = mData.size() - 1;
 
       const auto partElem = mData[0];
-      std::cout << "\nPartition Element is: " << partElem;
       while(i < j)
       {
         // Iterate throught the first half until an item is found

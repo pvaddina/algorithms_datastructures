@@ -35,6 +35,7 @@ template <typename STYP, typename CTYP> struct MySortOp
 template <typename CTYP> using SelSortTyp = MySortOp<AG::SelectionSort<CTYP>, CTYP>;
 template <typename CTYP> using MergeSortTyp = MySortOp<AG::MergeSort<CTYP>, CTYP>;
 template <typename CTYP> using BUMergeSortTyp = MySortOp<AG::BottomUpMergeSort<CTYP>, CTYP>;
+template <typename CTYP> using QuickSortTyp = MySortOp<AG::QuickSort<CTYP>, CTYP>;
 template <typename CTYP, typename DTyp> using InsSortGap1 = MySortOp<AG::InsertionSort<CTYP, DTyp, 1>, CTYP>;
 
 template <typename CTYP> struct StdSortOp
@@ -119,6 +120,9 @@ void TestCompareAllSortAlgos()
   auto stdArrayCopy_bumergesort = Data::data_std_array_10000;
   auto stdVecDataCopy_bumergesort = Data::data_vec_10000;
 
+  auto stdArrayCopy_quicksort = Data::data_std_array_10000;
+  auto stdVecDataCopy_quicksort = Data::data_vec_10000;
+
   std::cout << "My selection sort implementation ..." << std::endl;
   TestSort(SelSortTyp<Data::MyStdArray10000>(Data::data_std_array_10000));
   TestSort(SelSortTyp<std::vector<int> >(Data::data_vec_10000));
@@ -139,6 +143,13 @@ void TestCompareAllSortAlgos()
   std::cout << "Applying the bottom up merge sort on already sorted data ..." << std::endl;
   TestSort(BUMergeSortTyp<Data::MyStdArray10000>(stdArrayCopy_bumergesort));
   TestSort(BUMergeSortTyp<std::vector<int> >(stdVecDataCopy_bumergesort));
+
+  std::cout << "\n\nMy Quicksort implementation ..." << std::endl;
+  TestSort(QuickSortTyp<Data::MyStdArray10000>(stdArrayCopy_quicksort));
+  TestSort(QuickSortTyp<std::vector<int> >(stdVecDataCopy_quicksort));
+  std::cout << "Applying the bottom up merge sort on already sorted data ..." << std::endl;
+  TestSort(QuickSortTyp<Data::MyStdArray10000>(stdArrayCopy_quicksort));
+  TestSort(BUMergeSortTyp<std::vector<int> >(stdVecDataCopy_quicksort));
 
   std::cout << "\n\nMy insertion sort implementation ..." << std::endl;
   TestSort(InsSortGap1<Data::MyStdArray10000, int>(stdArrayCopy1));
@@ -199,6 +210,8 @@ void TestCompareAllSortAlgos()
   Validate(stdVecDataCopy_mergesort, stdVecDataCopy_std, "Merge");
   Validate(stdArrayCopy_bumergesort, stdArrayCopy_std, "Bottomup Merge");
   Validate(stdVecDataCopy_bumergesort, stdVecDataCopy_std, "Bottomup Merge");
+  Validate(stdArrayCopy_quicksort, stdArrayCopy_std, "Quick");
+  Validate(stdVecDataCopy_quicksort, stdVecDataCopy_std, "Quick");
   Validate(stdArrayCopy1, stdArrayCopy_std, "Insertion");
   Validate(stdVecDataCopy1, stdVecDataCopy_std, "Insertion");
   Validate(stdArrayCopy_hibbard, stdArrayCopy_std, "Shellsort_Hibbard");
@@ -223,8 +236,8 @@ void TestCompareAllSortAlgos()
 
 int main()
 {
-  RunQuickSortTests();
+  //RunQuickSortTests();
   //RunMergesortTests();
-  //TestCompareAllSortAlgos();
+  TestCompareAllSortAlgos();
 }
 
